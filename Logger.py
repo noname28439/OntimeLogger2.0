@@ -15,6 +15,10 @@ import random
 import os.path
 import json
 from win32gui import GetWindowText, GetForegroundWindow
+import win32gui
+import win32con
+import win32api
+import win32process
 
 def list_to_string(list):
     string = ""
@@ -68,6 +72,17 @@ def listmanagement_set_name(id, window_name):
 def listmanagement_add_process(id, window_name):
     counter_list[id] = [1, window_name]
 
+def get_current_active_window_path():
+    try:
+        hwnd = win32gui.GetForegroundWindow()
+        _,pid = win32process.GetWindowThreadProcessId(hwnd)
+        hndl = win32api.OpenProcess(win32con.PROCESS_QUERY_INFORMATION | win32con.PROCESS_VM_READ, 0, pid)
+        path = win32process.GetModuleFileNameEx(hndl, 0)
+        return path
+    except pywintypes.error:
+        print("<--ERROR-->")
+        return None
+
 
 def main_thread():
     global afk_timeout, on_sec, off_sec, is_afk, inGame
@@ -78,22 +93,23 @@ def main_thread():
 
         current_active_window_name = str(GetWindowText(GetForegroundWindow()))
         current_active_window_id = GetForegroundWindow()
+        current_active_window_path = get_current_active_window_path()
 
-        if current_active_window_id in counter_list:
-            listmanagement_set_name(current_active_window_id, current_active_window_name)
+
+        if current_active_window_path in counter_list:
+            listmanagement_set_name(current_active_window_path, current_active_window_name)
 
         if afk_timeout>0:
             is_afk=False
-            #on_sec += 1
-            if not current_active_window_id in counter_list:
-                listmanagement_add_process(current_active_window_id, current_active_window_name)
+            if not current_active_window_path in counter_list:
+                listmanagement_add_process(current_active_window_path, current_active_window_name)
             else:
-                listmanagement_add_time(current_active_window_id, 1)
+                listmanagement_add_time(current_active_window_path, 1)
             afk_timeout -= 1
         else:
             if not is_afk:                  #Wenn er noch nicht AFK war, dann ist er seit exakt 30 Sek. AFK und diese 30 Sek. werden abgezogen
                 off_sec += afk_set_to
-                listmanagement_add_time(current_active_window_id, -afk_set_to)
+                listmanagement_add_time(current_active_window_path, -afk_set_to)
             is_afk = True
             off_sec += 1
 
