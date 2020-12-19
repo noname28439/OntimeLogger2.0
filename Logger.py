@@ -57,11 +57,17 @@ with open(calculate_current_file_name(), "r") as file:
 
 
 
-
-
-
-
 counter_list = {}
+
+def listmanagement_add_time(id, time):
+    counter_list[id][0] = counter_list[id][0]+time
+
+def listmanagement_set_name(id, window_name):
+    counter_list[id][1] = window_name
+
+def listmanagement_add_process(id, window_name):
+    counter_list[id] = [1, window_name]
+
 
 def main_thread():
     global afk_timeout, on_sec, off_sec, is_afk, inGame
@@ -70,25 +76,29 @@ def main_thread():
         if inGame:
             afk_timeout = afk_set_to
 
-        current_active_window = str(GetWindowText(GetForegroundWindow()))
+        current_active_window_name = str(GetWindowText(GetForegroundWindow()))
+        current_active_window_id = GetForegroundWindow()
+
+        if current_active_window_id in counter_list:
+            listmanagement_set_name(current_active_window_id, current_active_window_name)
 
         if afk_timeout>0:
             is_afk=False
             #on_sec += 1
-            if not current_active_window in counter_list:
-                counter_list[current_active_window] = 1
+            if not current_active_window_id in counter_list:
+                listmanagement_add_process(current_active_window_id, current_active_window_name)
             else:
-                counter_list[current_active_window] = counter_list[current_active_window]+1;
+                listmanagement_add_time(current_active_window_id, 1)
             afk_timeout -= 1
         else:
             if not is_afk:                  #Wenn er noch nicht AFK war, dann ist er seit exakt 30 Sek. AFK und diese 30 Sek. werden abgezogen
                 off_sec += afk_set_to
-                counter_list[current_active_window] = counter_list[current_active_window]-afk_set_to
+                listmanagement_add_time(current_active_window_id, -afk_set_to)
             is_afk = True
-            #off_sec += 1
+            off_sec += 1
 
 
-        print("afk: "+str(afk_timeout) + "off: "+off_sec)
+        print("afk: "+str(afk_timeout) + " || off: "+str(off_sec))
         print("List: "+str(counter_list))
 
         #print("[ON_SEC: "+str(on_sec)+" MIN: "+str(round((on_sec/60),2))+" HOUR: "+str(round((on_sec/60/60),2))+""+" || afkTimeout: "+str(afk_timeout)+"]", end="\n")
