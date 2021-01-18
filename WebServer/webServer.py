@@ -3,7 +3,7 @@
 #Purpose: This is a Scrpit to log the Time, Programms are used on a PC
 
 print("importing...")
-from flask import Flask, render_template, Markup
+from flask import Flask, render_template, Markup, request
 import os
 import datetime
 import calendar
@@ -14,19 +14,35 @@ print("loading...")
 
 app = Flask(__name__)
 
-datapath = "../TimeLogs/"
+datapath = "C:\\Users\\Nutzer\\Desktop\\Tools\\TimeLogger2.0\\TimeLogs\\"
+
+
 
 @app.route("/")
 def main():
+    return render_template("main.html")
+
+
+@app.route("/times/")
+def times():
     found = readTimes(datapath)
     data = found[0]
     d_on = found[2]
     d_off = found[3]
-    return render_template("main.html",
+
+    amount = float(0.1)
+
+    if request.method == "GET":
+        if "amount" in request.args:
+            amount = request.args["amount"]
+            amount = amount
+
+    return render_template("graph.html",
                            PY_DATA=Markup(data),
                            PY_DATA_UNDERTITLES=Markup(found[1]),
                            PY_DATA_D_ON=round(d_on, 2),
-                           PY_DATA_D_OFF=round(d_off, 2)
+                           PY_DATA_D_OFF=round(d_off, 2),
+                           PY_SETTINGS_AMOUNT=amount
                            )
 
 
@@ -79,6 +95,13 @@ def readTimes(datapath):
     if howmany_files_found != 0:
         durchschnitt_on /= howmany_files_found
         durchschnitt_off /= howmany_files_found
+
+
+    if request.method == "GET":
+        if "days" in request.args:
+            days = int(request.args["days"])
+            return [result_list[-days:], datelist[-days:], durchschnitt_on / 60 / 60, durchschnitt_off / 60 / 60]
+
 
     return [result_list, datelist, durchschnitt_on/60/60, durchschnitt_off/60/60]
 

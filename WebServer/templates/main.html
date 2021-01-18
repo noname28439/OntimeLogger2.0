@@ -2,102 +2,61 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{PY_TITLE}}</title>
+    <title>Haupt Ebene</title>
+    <style>
+
+        body {
+            text-align: center;
+            font-family: Test;
+
+            background-color: gray;
+
+            color: darkorange;
+
+
+        }
+
+        .openBox{
+            border-color: black;
+            border-radius: 20px;
+            border-width: 2px;
+            /*border-style: solid;*/
+            font-size: 150%;
+        }
+
+        @font-face {
+            font-family: Test;
+            src: url(http://localhost:34567/static/fonts/ONEDAY.ttf);
+        }
+
+        #simplePage{
+            position: absolute;
+            bottom: 2%;
+
+
+            font-family: Test;
+
+            border-color: black;
+            border-radius: 20px;
+            border-width: 2px;
+            border-style: solid;
+            padding: 5px;
+        }
+
+    </style>
 </head>
 <body>
 
+    <h1 style="font-size: 500%">Rechner-Aktivitaetsverlauf</h1>
 
-    <div style="width: 90%">
-        <canvas id="testChart" width="400" height="400"></canvas>
-    </div>
-	
-    <p>Durchschnittliche Ontime: {{PY_DATA_D_ON}} Stunden</p>
-    <p>Durchschnittliche Offtime: {{PY_DATA_D_OFF}} Stunden</p>
+    <form method="get" action="/times/" target="_self" class="openBox">
+        <p>Anzahl der Tage: <input name="days" type="text"> (Zahlen)</p>
+        <p>Minimale Nutzungsdauer: <input name="amount" type="text"> (Stunden)</p>
 
-    <script src="{{ url_for('static',filename='scripts/Chart.bundle.min.js')}}"></script>
-    <script src="{{ url_for('static',filename='scripts/chartScript.js')}}"></script>
+        <input type="submit" value="Öffnen">
+    </form>
 
-
-    <script>
-
-        function print(text){
-            console.log(text)
-        }
-
-
-        var data = {{PY_DATA}};
-
-        var allPaths = []
-
-        for(let i = 0 ; i<data.length;i++){//Days
-            let dayData = data[i];
-            for(var key in dayData){//Processes Spotted On this Day
-                //Variable Decalaration
-                var path = key;
-                var time = dayData[key][0]
-                var lastHeader = dayData[key][1]
-                console.log("-----------------------------------------------------------------------------------------")
-                console.log("path: "+path)
-                console.log("time: "+time)
-                console.log("lastHeader: "+lastHeader)
-
-                //FunctionalPart
-
-                if(!allPaths.includes(path)){
-                    allPaths.push(path);
-                }
-
-            }
-        }
-
-        allTimeLists = []
-
-        for(let i = 0; i<allPaths.length; i++){
-            currentListBuildProcessPath = allPaths[i]
-            currentListBuildProcessTimeList = []
-
-            for(let ii = 0 ; ii<data.length;ii++){//DayIteration
-                let currentDayUseTime = 0;
-                let dayData = data[ii];
-                for(let key in dayData){//Processes Spotted On this Day
-                    let path = key;
-                    let time = dayData[key][0]
-                    if(path==currentListBuildProcessPath) {
-                        currentDayUseTime = time;
-                    }
-                }
-                currentListBuildProcessTimeList.push(Math.round((currentDayUseTime/60/60) * 100) / 100);
-            }
-            allTimeLists.push([currentListBuildProcessPath, currentListBuildProcessTimeList])      //Name muss auch gespeichert werden!!!
-        }
-
-        console.log(allTimeLists)
-
-        var graph_fill = false;
-        var graph_swiftness = 0.2;
-
-        var datasets = []
-        for(let i = 0; i<allTimeLists.length;i++){
-
-            let r = Math.random()*255
-            let g = Math.random()*255
-            let b = Math.random()*255
-
-            datasets.push(buildDataSet(allTimeLists[i][0].split("\\")[allTimeLists[i][0].split("\\").length-1].replace(".exe", ""), allTimeLists[i][1], graph_fill,graph_swiftness,"rgba("+r+","+g+","+b+","+0.9+")"));
-        }
-        console.log("test")
-
-        //var testset1 = buildDataSet("Ontimes", null, graph_fill,graph_swiftness,"rgba(0,255,0,"+0.5+")");
-        //var testset2 = buildDataSet("Offtimes", null, graph_fill,graph_swiftness,"rgba(255,0,0,"+0.4+")");
-
-        buildGraph("testChart", datasets,"bar", {{PY_DATA_UNDERTITLES}});
-        //{{PY_DATA_UNDERTITLES}}
-    </script>
-
-
-<script>
-
-</script>
+    <a href="http://localhost:34568/" id="simplePage">Graphik In/-Aktiv</a>
 
 </body>
 </html>

@@ -1,3 +1,5 @@
+
+
 function generateRandomNumber(min, max, nachkommastellen) {
     return data[i]=(Math.random() * (max - min) + min).toFixed(nachkommastellen);
 };
@@ -92,6 +94,8 @@ function buildGraph(canvasID, datasets, type, undertitles) {
         }
     );
 
+    return chart;
+
 }
 
 
@@ -145,6 +149,8 @@ if(false) {
         ta[i] = String(i);
 
 
+    //maintainAspectRatio: false in options um die canvas Größe zu nutzen
+
     var chart = new Chart(chart1,
         {
             type: "line",
@@ -168,6 +174,9 @@ if(false) {
                 },
                 scales: {
                     yAxes: [{ticks: {beginAtZero: true}}]
+                },filter: function(item, chart) {
+                    console.log("filter");
+                    return false;
                 }
             }
         }

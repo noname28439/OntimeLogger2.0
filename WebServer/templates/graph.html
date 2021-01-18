@@ -135,10 +135,24 @@
         //var testset1 = buildDataSet("Ontimes", null, graph_fill,graph_swiftness,"rgba(0,255,0,"+0.5+")");
         //var testset2 = buildDataSet("Offtimes", null, graph_fill,graph_swiftness,"rgba(255,0,0,"+0.4+")");
 
-        buildGraph("testChart", datasets,"bar", {{PY_DATA_UNDERTITLES}});
+        chart = buildGraph("testChart", datasets,"bar", {{PY_DATA_UNDERTITLES}});
         //{{PY_DATA_UNDERTITLES}}
 
-        stringToColor("bananenmus")
+
+        document.getElementById("testChart").onclick = function(evt) {
+            var activePoint = chart.getElementAtEvent(evt)[0];
+            var data = activePoint._chart.data;
+            var datasetIndex = activePoint._datasetIndex;
+            var label = data.datasets[datasetIndex].label;
+            var value = data.datasets[datasetIndex].data[activePoint._index];
+            console.log("----------------------------------------Click-Info----------------------------------------");
+            console.log("activePoints: "+activePoint);
+            console.log("data: "+data);
+            console.log("datasetIndex: "+datasetIndex);
+            console.log("label: "+label);
+            console.log("value: "+value);
+        };
+
 
     </script>
 
