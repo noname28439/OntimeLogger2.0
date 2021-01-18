@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{PY_TITLE}}</title>
+</head>
+<body>
+
+
+    <div style="width: 90%">
+        <canvas id="testChart" width="400" height="400"></canvas>
+    </div>
+	
+    <p>Durchschnittliche Ontime: {{PY_DATA_D_ON}} Stunden</p>
+    <p>Durchschnittliche Offtime: {{PY_DATA_D_OFF}} Stunden</p>
+
+    <script src="{{ url_for('static',filename='scripts/Chart.bundle.min.js')}}"></script>
+    <script src="{{ url_for('static',filename='scripts/chartScript.js')}}"></script>
+
+
+    <script>
+
+        function print(text){
+            console.log(text)
+        }
+
+        function stringToColor(string) {
+            let output = [0, 0, 0];
+            let fieldSelector = 0;
+
+            for(i in string) {
+                cc = string[i];
+                cv = cc.charCodeAt(0);
+
+                fieldSelector++;
+                if (fieldSelector > 2)
+                    fieldSelector = 0;
+
+                output[fieldSelector]+=cv;
+
+            }
+
+            for(let ii = 0; ii<output.length;ii++){
+                while(output[ii]>255)
+                    output[ii]-=255
+            }
+
+            return output;
+
+        }
+
+
+        var data = {{PY_DATA}};
+
+        var allPaths = []
+
+        for(let i = 0 ; i<data.length;i++){//Days
+            let dayData = data[i];
+            for(var key in dayData){//Processes Spotted On this Day
+                //Variable Decalaration
+                var path = key;
+                var time = dayData[key][0]
+                var lastHeader = dayData[key][1]
+                console.log("-----------------------------------------------------------------------------------------")
+                console.log("path: "+path)
+                console.log("time: "+time)
+                console.log("lastHeader: "+lastHeader)
+
+                //FunctionalPart
+
+                if(!allPaths.includes(path)){
+                    allPaths.push(path);
+                }
+
+            }
+        }
+
+        allTimeLists = []
+
+        for(let i = 0; i<allPaths.length; i++){
+            currentListBuildProcessPath = allPaths[i]
+            currentListBuildProcessTimeList = []
+
+            for(let ii = 0 ; ii<data.length;ii++){//DayIteration
+                let currentDayUseTime = 0;
+                let dayData = data[ii];
+                for(let key in dayData){//Processes Spotted On this Day
+                    let path = key;
+                    let time = dayData[key][0]
+                    if(path==currentListBuildProcessPath) {
+                        currentDayUseTime = time;
+                    }
+                }
+                currentListBuildProcessTimeList.push(Math.round((currentDayUseTime/60/60) * 100) / 100);
+            }
+            allTimeLists.push([currentListBuildProcessPath, currentListBuildProcessTimeList])      //Name muss auch gespeichert werden!!!
+        }
+
+        console.log(allTimeLists)
+
+        var graph_fill = false;
+        var graph_swiftness = 0.2;
+
+        var datasets = []
+        for(let i = 0; i<allTimeLists.length;i++){
+
+            let r;
+            let g;
+            let b;
+
+            if(false){
+                r = Math.random()*255
+                g = Math.random()*255
+                b = Math.random()*255
+            }else{
+                let color = stringToColor(allTimeLists[i][0]);
+                r = color[0];
+                g = color[1];
+                b = color[2];
+            }
+
+
+            let timeList = allTimeLists[i][1]
+            let show = false
+            for(let ii = 0; ii<timeList.length;ii++){
+                if(timeList[ii]>{{PY_SETTINGS_AMOUNT}})
+                    show = true
+            }
+
+            if(show)
+                datasets.push(buildDataSet(allTimeLists[i][0].split("\\")[allTimeLists[i][0].split("\\").length-1].replace(".exe", ""), allTimeLists[i][1], graph_fill,graph_swiftness,"rgba("+r+","+g+","+b+","+0.9+")"));
+        }
+        console.log("test")
+
+        //var testset1 = buildDataSet("Ontimes", null, graph_fill,graph_swiftness,"rgba(0,255,0,"+0.5+")");
+        //var testset2 = buildDataSet("Offtimes", null, graph_fill,graph_swiftness,"rgba(255,0,0,"+0.4+")");
+
+        buildGraph("testChart", datasets,"bar", {{PY_DATA_UNDERTITLES}});
+        //{{PY_DATA_UNDERTITLES}}
+
+        stringToColor("bananenmus")
+
+    </script>
+
+
+<script>
+
+</script>
+
+</body>
+</html>
