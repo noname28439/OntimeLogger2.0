@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Programminfo vom {{PY_DATA_DATE}}</title>
+    <style>
+
+        body {
+            text-align: center;
+            font-family: Test;
+
+            background-color: gray;
+
+            color: darkorange;
+
+
+        }
+
+        .openBox{
+            border-color: black;
+            border-radius: 20px;
+            border-width: 2px;
+            /*border-style: solid;*/
+            font-size: 150%;
+        }
+
+        @font-face {
+            font-family: Test;
+            src: url(/static/fonts/ONEDAY.ttf);
+        }
+
+        .simplePage{
+            position: absolute;
+            bottom: 2%;
+
+
+            font-family: Test;
+
+            border-color: black;
+            border-radius: 20px;
+            border-width: 2px;
+            border-style: solid;
+            padding: 5px;
+
+            background-color: white;
+            color: dodgerblue;
+            font-weight: bold;
+        }
+
+
+        .input_mod {
+            font-size: 16px;
+            font-size: max(16px, 1em);
+            font-family: Test;
+            padding: 0.25em 0.5em;
+            background-color: #fff;
+            border: 2px solid var(--input-border);
+            border-radius: 4px;
+        }
+
+    </style>
+</head>
+<body>
+
+<button><a href="/">Zurrück</a></button>
+
+<h1 style="font-size: 500%"><u>Programminfo von {{PY_DATA_DATE}}</u></h1>
+
+<div id="ProgrammResults">
+
+</div>
+
+<script>
+
+    returnMap = {{PY_DATA_DATA}}
+
+    let workmap = []
+
+    for(let pupu in returnMap){
+        let path = pupu;
+        let time = returnMap[pupu][0]
+        let FrameName = returnMap[pupu][1]
+
+        workmap.push([path, [time, FrameName]])
+    }
+
+
+    workmap.sort(function(a, b) {
+        //console.log("Soration: "+b[1][0]+"|"+ a[1][0])
+        return b[1][0] - a[1][0];
+    });
+
+
+    var proglist = document.getElementById("ProgrammResults");
+
+    for(let i in workmap){
+        let path = workmap[i][0];
+        let time = workmap[i][1][0];
+
+        let pathProcessed = path.split("\\")[path.split("\\").length-1].toLowerCase().replace(".exe", "");
+
+        let element = document.createElement("p");
+
+        let text = "";
+
+        text = pathProcessed+" ("+(time/60).toFixed(0)+" Minuten | "+(time/60/60).toFixed(2)+" Stunden)"
+
+        if(time<60*60){     //Under One hour
+            text = pathProcessed+" ("+(time/60).toFixed(0)+" Minuten)"
+        }
+        if(time<60){     //Under One minute
+            text = pathProcessed+" ("+(time).toFixed(0)+" Sekunden)"
+        }
+
+
+        element.innerHTML = text;
+        element.style.fontSize = "200%";
+        element.style.fontWeight = "10px";
+
+
+        proglist.appendChild(element);
+
+        console.log(path)
+    }
+
+</script>
+
+</body>
+</html>

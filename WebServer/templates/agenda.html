@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Haupt Ebene</title>
+    <title>Agenda</title>
     <style type="text/css" src="{{ url_for('static',filename='styles/imported_inputStyle.css')}}"></style>
     <style>
 
@@ -59,22 +59,21 @@
             border-radius: 4px;
         }
 
+        #AgendaImage{
+            border-radius: 5px;
+            border-width: 3px;
+            border-style: solid;
+            border-color: white;
+        }
+
     </style>
 </head>
 <body>
 
 
-    <h1 style="font-size: 500%">Agenda</h1>
+<h1 style="font-size: 500%" ><u>Agenda</u></h1>
 
-    <form method="get" action="/times/" target="_self" class="openBox">
-        <p>Wie viele Tage moechtest du angezeigt bekommen?: <input name="days" type="text" value="10" class="input_mod"> (Tage)</p>
-        <p>Minimale Nutzungsdauer: <input name="amount" type="text" value="0.3" class="input_mod"> (Stunden)</p>
-
-        <input type="submit" value="Öffnen" class="input_mod" style="border-color: black; border-width: 2px; border-style: solid;">
-    </form>
-
-    <a href="http://192.168.178.27:34568/" class="simplePage">Graphik In/-Aktiv</a>
-    <a href="/agenda/" class="simplePage" style="bottom: 6%;">Agenda</a>
+<img src="{{ url_for('static',filename='images/Agenda.png')}}" type="image/png" id="AgendaImage">
 
 </body>
 </html>

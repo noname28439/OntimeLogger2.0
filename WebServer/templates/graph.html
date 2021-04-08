@@ -6,6 +6,8 @@
 </head>
 <body>
 
+    <button><a href="/">Zurrück</a></button>
+
 
     <div style="width: 90%">
         <canvas id="testChart" width="400" height="400"></canvas>
@@ -19,7 +21,17 @@
 
 
     <script>
-
+	function movingAvg(array, countBefore, countAfter) {
+	  if (countAfter == undefined) countAfter = 0;
+	  const result = [];
+	  for (let i = 0; i < array.length; i++) {
+		const subArr = array.slice(Math.max(i - countBefore, 0), Math.min(i + countAfter + 1, array.length));
+		const avg = subArr.reduce((a, b) => a + (isNaN(b) ? 0 : b), 0) / subArr.length;
+		result.push(avg);
+	  }
+	  return result;
+	}
+	
         function print(text){
             console.log(text)
         }
@@ -97,6 +109,15 @@
         }
 
         console.log(allTimeLists)
+		
+		console.log("Avaragation: "+{{PY_DATA_AVARAGATION}})
+		
+		
+		for(let i in allTimeLists){
+			let item = allTimeLists[i][1];
+			item = movingAvg(item, {{PY_DATA_AVARAGATION}});
+			allTimeLists[i][1]=item;
+		}
 
         var graph_fill = false;
         var graph_swiftness = 0.2;
@@ -135,7 +156,7 @@
         //var testset1 = buildDataSet("Ontimes", null, graph_fill,graph_swiftness,"rgba(0,255,0,"+0.5+")");
         //var testset2 = buildDataSet("Offtimes", null, graph_fill,graph_swiftness,"rgba(255,0,0,"+0.4+")");
 
-        chart = buildGraph("testChart", datasets,"bar", {{PY_DATA_UNDERTITLES}});
+        chart = buildGraph("testChart", datasets,"{{PY_DATA_BARTYPE}}", {{PY_DATA_UNDERTITLES}}, ("{{PY_DATA_BARTYPE}}"=="bar"));
         //{{PY_DATA_UNDERTITLES}}
 
 
@@ -147,10 +168,13 @@
             var value = data.datasets[datasetIndex].data[activePoint._index];
             console.log("----------------------------------------Click-Info----------------------------------------");
             console.log("activePoints: "+activePoint);
+            console.log("Date: "+ activePoint._model.label)
             console.log("data: "+data);
             console.log("datasetIndex: "+datasetIndex);
             console.log("label: "+label);
             console.log("value: "+value);
+            //alert(label)
+
         };
 
 

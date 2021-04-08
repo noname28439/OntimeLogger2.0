@@ -37,7 +37,7 @@ function buildDataSet(name, data, filled, tension, color){      //Bsp.: buildDat
     return set;
 }
 
-function buildGraph(canvasID, datasets, type, undertitles) {
+function buildGraph(canvasID, datasets, type, undertitles, stacked) {
     var chartObject = document.getElementById(canvasID).getContext("2d");
 
     if (type == "")
@@ -84,10 +84,10 @@ function buildGraph(canvasID, datasets, type, undertitles) {
                 responsive: true,
                 scales: {
                     xAxes: [{
-                        stacked: true,
+                        stacked: stacked,
                     }],
                     yAxes: [{
-                        stacked: true
+                        stacked: stacked
                     }]
                 }
             }

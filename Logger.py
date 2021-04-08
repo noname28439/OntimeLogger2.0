@@ -62,9 +62,10 @@ def file_save():
 
 def file_load():
     global counter_list
-    with open(calculate_current_file_name(), "r") as file:
-        data = json.load(file)
-        counter_list = data
+    if os.path.isfile(calculate_current_file_name()):
+        with open(calculate_current_file_name(), "r") as file:
+            data = json.load(file)
+            counter_list = data
 
 file_load()
 
